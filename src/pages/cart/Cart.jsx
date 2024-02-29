@@ -3,6 +3,7 @@ import React from 'react'
 
 import CardCheckout from '../../components/cards/CardCheckout';
 import CardCart from '../../components/cards/CardCart'
+import { useUserContext } from '../../contexts/UserContextProvider';
 
 export default function Cart({ products, cart, totalPriceSum}) {
 
@@ -11,10 +12,16 @@ export default function Cart({ products, cart, totalPriceSum}) {
  const cartProduct = (id) => {
     return cart.products.find((cartItem) => cartItem.productId === id);
   };
+  
  
+  // const { user, login, logout } = useUserContext();
+  // login('Ali');
+  // logout();
 
   return (
+
     <>
+    {/* <Typography variant='h1'>Hello {user}</Typography> */}
         <Box>
         </Box>
         <Grid container spacing={2} bgcolor={'#F5F8FB'} p={3} >

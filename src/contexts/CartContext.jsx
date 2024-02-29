@@ -1,64 +1,61 @@
-// CartContext.js
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { useQuery, useMutation } from 'react-query';
-import axios from 'axios';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useQuery } from 'react-query';
+import { fetchCart, fetchProductById } from '../utils/Api';
 
 const CartContext = createContext();
 
-const fetchCart = async () => {
-  const response = await axios.get('https://fakestoreapi.com/carts/7');
-  return response.data;
-};
+export const CartProvider = ({ children }) => {
+  const { data: cartData, isLoading: cartLoading, isError: cartError, error: cartErrorMessage } = useQuery('cart', fetchCart);
 
-const updateCart = async (newCart) => {
-  const response = await axios.put('https://fakestoreapi.com/carts/7', newCart);
-  return response.data;
-};
+  const [cart, setCart] = useState(cartData);
 
-const CartProvider = ({ children }) => {
-  const { data: cart, refetch } = useQuery('cart', fetchCart);
+  // Products from the Cart
+  const { data: products, isLoading: productsLoading, isError : productsError, error: productsErrorMessage } = useQuery(
+      'products',
+      async () => {
+        if (cart && cart.products) {
+          const fetchProductPromises = cart.products.map((product) => fetchProductById(product.productId));
+          return await Promise.all(fetchProductPromises);
+        }
+        return [];
+      },
+      { enabled: !!cart } // Only fetch products if cart data is available
+      );
 
-  const updateCartMutation = useMutation(updateCart, {
-    onSuccess: () => {
-      refetch();
-    },
-  });
 
-  const addToCart = async (productId, quantity) => {
-    const existingProduct = cart.products.find((product) => product.productId === productId);
 
-    if (existingProduct) {
-      const updatedCart = {
-        ...cart,
-        products: cart.products.map((product) =>
-          product.productId === productId ? { ...product, quantity: product.quantity + quantity } : product
-        ),
-      };
-
-      updateCartMutation.mutate(updatedCart);
-    } else {
-      const newCart = {
-        ...cart,
-        products: [...cart.products, { productId, quantity }],
-      };
-
-      updateCartMutation.mutate(newCart);
+  useEffect(() => {
+    if (cartData) {
+      setCart(cartData);
     }
+  }, [cartData]);
+
+  const AddtoCart =(newCart) => {
+    setCart(newCart);
+  };
+  const contextValue = {
+    cart,
+    products,
+    AddtoCart,
+    
+    cartLoading,
+    cartError,
+    cartErrorMessage
+
   };
 
   return (
-    <CartContext.Provider value={{ cart, addToCart }}>
+
+    <CartContext.Provider value={contextValue}>
       {children}
     </CartContext.Provider>
   );
 };
 
-const useCart = () => {
+export const useCart = () => {
   const context = useContext(CartContext);
   if (!context) {
     throw new Error('useCart must be used within a CartProvider');
   }
   return context;
 };
-
-export { CartProvider, useCart };

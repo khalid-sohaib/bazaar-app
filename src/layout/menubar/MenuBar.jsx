@@ -1,5 +1,5 @@
-import React from 'react'
-import { Box, Button, Container, Grid, Hidden, Menu, MenuItem, Typography } from '@mui/material'
+import React, { useState } from 'react'
+import { Box, Button, Container, Drawer, Grid, Hidden, IconButton, Menu, MenuItem, Typography } from '@mui/material'
 import { Link } from 'react-router-dom';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
@@ -9,9 +9,18 @@ import CategoryMenu from '../../components/CategoryMenu';
 import CustomLink from '../../components/CustomLink';
 import CartDrawer from '../cartDrawer/CartDrawer';
 import MenuButton from '../../components/MenuButton';
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
+import CartDrawerContainer from '../../containers/CartDrawer';
 
 export default function MenuBar() {
   
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+    const toggleMobileMenu = () => {
+      setMobileMenuOpen(!mobileMenuOpen);
+    };
+
   return (
     // <Box position={'sticky'} mx={2} sx={{display:'flex', alignItems:'center', justifyContent:'space-between', marginTop:'10px', zIndex:'1'}}>
     <Box
@@ -30,23 +39,103 @@ export default function MenuBar() {
            display={'flex'}
            
         >   
-            <Link 
-                to={{
-                      pathname: '/',
-                    }}
+            <Hidden lgDown>
+                <Link 
+                    to={{
+                        pathname: '/',
+                        }}
+                >
+                    <img src='/logo.svg' />
+                </Link>
+                <CategoryMenu/>
+            </Hidden>
+
+            <Hidden lgUp>
+                <Button onClick={toggleMobileMenu}>
+                    <MenuIcon sx={{color:'#2B3445'}} />
+                </Button>
+            </Hidden>
+
+            <Drawer
+                anchor="left"
+                open={mobileMenuOpen}
+                onClose={() => setMobileMenuOpen(false)}
             >
-                <img src='/logo.svg' />
-            </Link>
-            <CategoryMenu/>
+
+                <Box
+                width={250}
+                padding={2}
+                display='flex'
+                flexDirection='column'
+                alignItems='center'
+                >
+                    <IconButton onClick={() => setMobileMenuOpen(false)}>
+                        <CloseIcon/>
+                    </IconButton>
+                <Link
+                    style={{ textDecoration: 'none', color: '#2B3445' }}
+                    to={{ pathname: '/' }}
+                    onClick={() => setMobileMenuOpen(false)}
+                >
+                    <Typography variant='h6' gutterBottom>
+                    Home
+                    </Typography>
+                </Link>
+                <Link
+                    style={{ textDecoration: 'none', color: '#2B3445' }}
+                    to={{ pathname: '/product-category' }}
+                    onClick={() => setMobileMenuOpen(false)}
+                >
+                    <Typography variant='h6' gutterBottom>
+                    Products
+                    </Typography>
+                </Link>
+                <Link
+                    style={{ textDecoration: 'none', color: '#2B3445' }}
+                    to={{ pathname: '/product-detail' }}
+                    onClick={() => setMobileMenuOpen(false)}
+                >
+                    <Typography variant='h6' gutterBottom>
+                    Detail
+                    </Typography>
+                </Link>
+                <Link
+                    style={{ textDecoration: 'none', color: '#2B3445' }}
+                    to={{ pathname: '/cart' }}
+                    onClick={() => setMobileMenuOpen(false)}
+                >
+                    <Typography variant='h6' gutterBottom>
+                    Pages
+                    </Typography>
+                </Link>
+                </Box>
+            </Drawer>
+            
         </Box>
 
-        <Box>
-        </Box>
+        
+
+        <Hidden lgUp>
+            <Link 
+                to={{
+                    pathname: '/',
+                    }}
+            >
+                <img src='/bazaar-sm.svg' />
+            </Link>
+        </Hidden>
 
         <Hidden lgDown>
             <Box sx={{display:'flex', }} color={"#2B3445"} > 
                 <Link style={{ textDecoration: 'none', color :'#2B3445' }} to={{ pathname: '/',}}>
-                    <MenuButton title={'Home'} items={['Profile', 'Products', 'Login']}/>
+                    {/* <MenuButton title={'Home'} items={['Profile', 'Products', 'Login']}/> */}
+                    {/* <Typography>Home</Typography> */}
+                    <Box px={2} display={'flex'} sx={{ textTransform: 'none', '&:hover': {  color:'#D13F57' },  }} >
+                        <Typography variant='body2'>
+                        Home
+                        </Typography>
+                        <ExpandMoreIcon sx={{color:'darkgray', }}/>
+                    </Box>
                 </Link>
                 <Link style={{ textDecoration: 'none', color :'#2B3445' }} to={{ pathname: '/product-category',}}>
                     <MenuButton title={'Products'} items={['Profile', 'Products', 'Login']}/>
@@ -56,9 +145,7 @@ export default function MenuBar() {
                 </Link>
                 <Link style={{ textDecoration: 'none', color :'#2B3445' }} to={{ pathname: '/',}}>
                     <MenuButton title={'Pages'} items={['Profile', 'Products', 'Login']}/>
-                </Link>
-                
-                
+                </Link> 
             </Box>
         </Hidden>
 
@@ -68,7 +155,7 @@ export default function MenuBar() {
                 <ShoppingBagOutlinedIcon sx={{'&:hover': {  color:'#D13F57' },}}/> 
            </CustomLink> */}
 
-            <CartDrawer/>
+            <CartDrawerContainer/>
         </Box>
     </Box>
   )

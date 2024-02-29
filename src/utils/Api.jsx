@@ -17,12 +17,11 @@ export const fetchProducts = async () =>{
     }
     
 export const fetchCart = async () =>{
-    const res= await axios.get(`https://fakestoreapi.com/carts/3`);
+    const res= await axios.get(`https://fakestoreapi.com/carts/5`);
     return res.data;
     }
 
 export const fetchProductById = async (productId) => {
         const response = await axios(`https://fakestoreapi.com/products/${productId}`);
-            
             return response.data;
         };

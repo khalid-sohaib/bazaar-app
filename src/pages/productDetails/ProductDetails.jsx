@@ -4,6 +4,7 @@ import { useLocation, useParams } from 'react-router-dom'
 import { useQuery } from 'react-query';
 import axios from 'axios';
 import { useMutation } from 'react-query';
+import { useCart } from '../../contexts/CartContext';
 
 
 
@@ -21,23 +22,34 @@ export default function ProductDetails() {
   axios.post('https://fakestoreapi.com/carts', newCart)
 );
 
+//get cart from context
+
+const {  
+  cart,
+  AddtoCart } = useCart();
+console.log("Cart obj from state in detail page",cart);
 const handleClick = async () => {
   try {
     // Data for creating a new cart
-    const newCartData = {
-      userId: 5,
-      date: '2020-02-03',
-      products: [
-        { productId: product.id, quantity: 1 },
-        // Add products
-      ],
-    };
+    // const newCartData = {
+    //   userId: 5,
+    //   date: '2020-02-03',
+    //   products: [
+    //     { productId: product.id, quantity: 1 },
+    //     // Add products
+    //   ],
+    // };
+
+   cart.products.push({productId: product.id, quantity: 1 });
+   
 
     // POST request to create a new cart
-    const createdCart = await createCartMutation.mutateAsync(newCartData);
+    // const createdCart = await createCartMutation.mutateAsync(newCartData);
 
-    console.log('New Cart data:', createdCart.data);
-    
+    // console.log('New Cart data:', createdCart.data);
+    // AddtoCart(createdCart);
+    console.log("New Cart data",cart);
+    AddtoCart(cart);
 
   } catch (error) {
     console.error('Error creating new cart:', error);

@@ -48,7 +48,7 @@ const styles =() =>({
     }
     
 })
-export default function CartDrawer() {
+export default function CartDrawer({ products, cart }) {
     const classes = styles();
 
     const [open, setOpen] = React.useState(false);
@@ -57,53 +57,36 @@ export default function CartDrawer() {
       setOpen(newOpen);
     };
   
-    // const [cart, setCart] = useState({
-    //     id: 11, 
-    //     userId: 5, 
-    //     date: '2020-02-03', 
-    //     products: 
-    //             [
-    //                 {
-    //                     productId: 9, 
-    //                     quantity: 1
-    //                 },
-    //                 {
-    //                     productId: 11, 
-    //                     quantity: 2
-    //                 },
-    //             ]
-    // });
+        // const queryKey= 'cart';
+        // const {data : cart, isLoading: cartLoading, isError: cartError, error: cartErrorMessage } = useQuery(queryKey, fetchCart);
 
-        const queryKey= 'cart';
-        const {data : cart, isLoading: cartLoading, isError: cartError, error: cartErrorMessage } = useQuery(queryKey, fetchCart);
-
-        const fetchProduct = async (productId) => {
-            const response = await axios(`https://fakestoreapi.com/products/${productId}`);                
-                return response.data;
-            };
+        // const fetchProduct = async (productId) => {
+        //     const response = await axios(`https://fakestoreapi.com/products/${productId}`);                
+        //         return response.data;
+        //     };
         
-        const { data: products, isLoading: productsLoading, isError : productsError, error: productsErrorMessage } = useQuery(
-        'products',
-        async () => {
-            if (cart && cart.products) {
-            const fetchProductPromises = cart.products.map((product) => fetchProduct(product.productId));
-            return await Promise.all(fetchProductPromises);
-            }
-            return [];
-        },
-        { enabled: !!cart } // Only fetch products if cart data is available
-        );
+        // const { data: products, isLoading: productsLoading, isError : productsError, error: productsErrorMessage } = useQuery(
+        // 'products',
+        // async () => {
+        //     if (cart && cart.products) {
+        //     const fetchProductPromises = cart.products.map((product) => fetchProduct(product.productId));
+        //     return await Promise.all(fetchProductPromises);
+        //     }
+        //     return [];
+        // },
+        // { enabled: !!cart } // Only fetch products if cart data is available
+        // );
         
-        if (cartLoading || productsLoading) return <CircularProgress size="lg" />;
-        //    if (cartError || productsError) return <p>Error: {cartErrorMessage?.message || productsErrorMessage?.message}</p>;
-        if (cartError || cart == null) {
-            console.error('Cart Error:', cartError);
-            return <p>Error fetching cart: {cartErrorMessage?.message}</p>;
-          }
-          if (productsError || products == null) {
-            console.error('Products Error:', productsError);
-            return <p>Error fetching products: {productsErrorMessage?.message}</p>;
-          }
+        // if (cartLoading || productsLoading) return <CircularProgress size="lg" />;
+        // //    if (cartError || productsError) return <p>Error: {cartErrorMessage?.message || productsErrorMessage?.message}</p>;
+        // if (cartError || cart == null) {
+        //     console.error('Cart Error:', cartError);
+        //     return <p>Error fetching cart: {cartErrorMessage?.message}</p>;
+        //   }
+        //   if (productsError || products == null) {
+        //     console.error('Products Error:', productsError);
+        //     return <p>Error fetching products: {productsErrorMessage?.message}</p>;
+        //   }
     
         //   setProducts(productsData);
 
