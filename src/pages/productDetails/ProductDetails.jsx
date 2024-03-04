@@ -1,70 +1,72 @@
-import { Avatar, Box, Button, Grid, Rating, Typography } from '@mui/material'
+import { Avatar, Box, Button, CircularProgress, Grid, Rating, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { useQuery } from 'react-query';
 import axios from 'axios';
 import { useMutation } from 'react-query';
 import { useCart } from '../../contexts/CartContext';
+import { useCartContext } from '../../contexts/TestCartContext';
+import { fetchProductById } from '../../utils/Api';
 
 
-
+const styles = () => ({
+  spinner : {
+          display:"flex",
+          alignItems:"center",
+          justifyContent:"center",
+          height:"100vh",
+  }
+})
 
 export default function ProductDetails() {
-
+    const classes = styles();
+    //Getting Prdoduct-Id
     const location = useLocation();
     const id = location.state?.id || 1;
     
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    },[])
-
-    const createCartMutation = useMutation((newCart) =>
-  axios.post('https://fakestoreapi.com/carts', newCart)
-);
-
+   
 //get cart from context
-
 const {  
   cart,
   AddtoCart } = useCart();
-console.log("Cart obj from state in detail page",cart);
+
+
 const handleClick = async () => {
   try {
-    // Data for creating a new cart
-    // const newCartData = {
-    //   userId: 5,
-    //   date: '2020-02-03',
-    //   products: [
-    //     { productId: product.id, quantity: 1 },
-    //     // Add products
-    //   ],
-    // };
+    // Update cart state using the functional form of setCart
+    AddtoCart((prevCart) => {
+      // Check if the cart exists (has length)
+      if (prevCart && prevCart.length > 0) {
+        // Check if the productId already exists in the cart
+        const existingProductIndex = prevCart.findIndex(
+          (e) => e.productId === id
+        );
 
-   cart.products.push({productId: product.id, quantity: 1 });
-   
-
-    // POST request to create a new cart
-    // const createdCart = await createCartMutation.mutateAsync(newCartData);
-
-    // console.log('New Cart data:', createdCart.data);
-    // AddtoCart(createdCart);
-    console.log("New Cart data",cart);
-    AddtoCart(cart);
-
+        if (existingProductIndex !== -1) {
+          // If productId exists, increment the quantity
+          return prevCart.map((product, index) =>
+            index === existingProductIndex
+              ? { ...product, quantity: product.quantity + 1 }
+              : product
+          );
+        } else {
+          // If productId doesn't exist, add a new entry with quantity=1
+          return [...prevCart, { productId: id, quantity: 1 }];
+        }
+      } else {
+        // If cart doesn't exist, add a new entry with quantity=1
+        return [{ productId: id, quantity: 1 }];
+      }
+    });
   } catch (error) {
-    console.error('Error creating new cart:', error);
-    // error messages.
+    console.error('Error updating cart:', error);
   }
 };
-    
-    const { data: product, isLoading, error } = useQuery(['product', id], () =>
-    axios(`https://fakestoreapi.com/products/${id}`).then((response) => response.data)
-    );
-    if (isLoading) return <p>Loading...</p>;
+
+console.log("Idddddddddddd",id);
+    const {data: product, isLoading, error} = useQuery('product',()=>fetchProductById(id));
+    if (isLoading) return <Box sx={classes.spinner}><CircularProgress size={100} thickness={2} /></Box>;
     if (error) return <p>Error: {error.message}</p>;
-
- 
-
 
 
     const imgUrl = product?.image;

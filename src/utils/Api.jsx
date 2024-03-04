@@ -25,3 +25,15 @@ export const fetchProductById = async (productId) => {
         const response = await axios(`https://fakestoreapi.com/products/${productId}`);
             return response.data;
         };
+
+export const cartUpdate = async (newCart) => {
+        const res = axios.post('https://fakestoreapi.com/carts', newCart)
+        return res.data;
+
+        };
+export const addCart = async (newCart) => {
+        const res = axios.post('https://fakestoreapi.com/carts', newCart)
+        return res.data;
+
+        };
+

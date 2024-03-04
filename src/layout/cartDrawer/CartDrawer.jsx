@@ -12,6 +12,7 @@ import { CircularProgress, Drawer, IconButton, Typography } from '@mui/material'
 import CustomLink from '../../components/CustomLink';
 import CardCartDrawer from '../../components/cards/CardCartDrawer';
 import { fetchCart } from '../../utils/Api';
+import { useCart } from '../../contexts/CartContext';
 
 
 const styles =() =>({
@@ -89,10 +90,16 @@ export default function CartDrawer({ products, cart }) {
         //   }
     
         //   setProducts(productsData);
+        const {handleDeleteFromCart } = useCart();
+
+        const handleDeleteByIndex = (index) => {
+            handleDeleteFromCart(index);
+          };
 
  // Finding the corsponding quanity 
  const cartProduct = (id) => {
-    return cart.products.find((cartItem) => cartItem.productId === id);
+    console.log("cart in cart drawer", cart)
+    return cart.find((cartItem) => cartItem.productId === id);
   };
 
     const DrawerList = (
@@ -112,7 +119,7 @@ export default function CartDrawer({ products, cart }) {
 
             <Box display={'flex'} flexDirection={'column'} px={0} >
             {products&&
-                        products.map((product) => {
+                        products.map((product, index) => {
                             const words = product.title.split(" ");
                             const shortenedTitle = words.slice(0, 4).join(" ")
                             return(
@@ -124,6 +131,7 @@ export default function CartDrawer({ products, cart }) {
                                         title={shortenedTitle}
                                         price={product.price.toString()}
                                         quantity={cartProduct(product.id) ? cartProduct(product.id).quantity : 0}
+                                        onDelete={() => handleDeleteByIndex(index)}
                                         
                                         />
                                     </Box>

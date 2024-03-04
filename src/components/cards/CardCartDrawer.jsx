@@ -25,12 +25,12 @@ const styles =() =>({
 
 
 
-export default function CardCartDrawer({imgUrl, title, price, quantity}) {
-
-
-          
+export default function CardCartDrawer({imgUrl, title, price, quantity, onDelete}) {    
     const classes = styles();
 
+    const handleClick = () => {
+        onDelete();
+    }
 
     return (
         <>
@@ -62,8 +62,8 @@ export default function CardCartDrawer({imgUrl, title, price, quantity}) {
                     <Typography fontSize={14} fontWeight={600} sx={{color:'#D23F57'}}> ${price * quantity} </Typography> 
                 </Box>
             </CardContent>
-            <IconButton>
-                <CloseIcon fontSize='small'/>
+            <IconButton onClick={handleClick}>
+                <CloseIcon fontSize='small' />
             </IconButton>
         </Card>
         {/* <Divider/> */}

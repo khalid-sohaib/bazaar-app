@@ -6,11 +6,20 @@ import Filterbar from '../../components/Filterbar'
 import ProductSideBar from '../../components/ProductSideBar'
 import Product from '../../components/cards/Product';
 
+const styles = () => ({
+  spinner : {
+          display:"flex",
+          alignItems:"center",
+          justifyContent:"center",
+          height:"100vh",
+  }
+})
 
 export default function ProductsByCategory({ category,  products, isLoading, isError, error, length}) {
 
+  const classes = styles();
 
-  if(isLoading) return <CircularProgress size="lg" />
+  if (isLoading) return <Box sx={classes.spinner}><CircularProgress size={100} thickness={2} /></Box>;
   if(isError) return <h1>{error.message}</h1>
 
 
